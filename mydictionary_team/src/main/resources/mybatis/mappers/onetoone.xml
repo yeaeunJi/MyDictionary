@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="onetoone">
+	<select id="findOne" parameterType="String" resultType="onetoonevo">
+		<![CDATA[
+			select no, title, content, writer, regdate, reply
+			from onetoone
+			where no = #{no }
+		]]>
+	</select>
+	
+	<select id="findAll" parameterType="map" resultType="onetoonevo">
+		<![CDATA[
+			select N2.no, N2.title, N2.content, N2.writer, N2.regdate, N2.reply from 
+				( select @ROWNUM:=@ROWNUM+1 num, N1.* 
+					from (
+							select * 
+						from onetoone
+						order by regdate desc 
+						) as N1
+					WHERE (@rownum:=0)=0 and writer= #{name }
+				) as N2
+			where num between #{start } and #{end }
+		]]>
+	</select>
+	
+	<select id="adminFindAll" parameterType="map" resultType="onetoonevo">
+		<![CDATA[
+			select N2.no, N2.title, N2.content, N2.writer, N2.regdate, N2.reply from 
+				( select @ROWNUM:=@ROWNUM+1 num, N1.* 
+					from (
+							select * 
+						from onetoone
+						order by regdate desc 
+						) as N1
+					WHERE (@rownum:=0)=0
+				) as N2
+			where num between #{start } and #{end }
+		]]>
+	</select>
+	
+	<select id="findAllCnt" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*)
+			from onetoone
+			where writer = #{nickname }
+		]]>
+	</select>
+	
+	<select id="adminFindAllCnt" resultType="int">
+		<![CDATA[
+			select count(*)
+			from onetoone
+		]]>
+	</select>
+	
+	<select id="searchTitleContentCnt" parameterType="map" resultType="int">
+		<![CDATA[
+			select count(*)
+			from onetoone
+			where writer = #{nickname } and title like concat('%',#{keyword },'%') or content like concat('%',#{keyword },'%') 
+		]]>
+	</select>
+	
+	<select id="searchTitleCnt" parameterType="map" resultType="int">
+		<![CDATA[
+			select count(*)
+			from onetoone
+			where writer = #{nickname } and title like concat('%',#{keyword },'%')
+		]]>
+	</select>
+	
+	<select id="adminSearchTitleContentCnt" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*)
+			from onetoone
+			where title like concat('%',#{keyword },'%') or content like concat('%',#{keyword },'%') 
+		]]>
+	</select>
+	
+	<select id="adminSearchTitleCnt" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*)
+			from onetoone
+			where title like concat('%',#{keyword },'%')
+		]]>
+	</select>
+	
+	
+	<select id="searchTitleContent" parameterType="map" resultType="onetoonevo">
+			<![CDATA[
+				select N2.no, N2.title, N2.content, N2.writer, N2.regdate, N2.reply from 
+					( select @ROWNUM:=@ROWNUM+1 num, N1.* 
+						from (
+								select * 
+								from onetoone
+								where writer = #{userId }
+								order by regdate desc 
+							) as N1
+						WHERE (@rownum:=0)=0 and title like concat('%',#{keyword },'%') or content like concat('%',#{keyword },'%')
+					) as N2
+				where num between #{start } and #{end } 
+			]]>
+	</select>
+	
+	<select id="searchTitle" parameterType="map" resultType="onetoonevo">
+			<![CDATA[
+				select N2.no, N2.title, N2.content, N2.writer, N2.regdate, N2.reply from 
+					( select @ROWNUM:=@ROWNUM+1 num, N1.* 
+						from (
+								select * 
+								from onetoone
+								where writer = #{userId }
+								order by regdate desc 
+							) as N1
+						WHERE (@rownum:=0)=0 and title like concat('%',#{keyword},'%')
+					) as N2
+				where num between #{start } and #{end }
+			]]>
+	</select>
+	
+	<select id="adminSearchTitleContent" parameterType="map" resultType="onetoonevo">
+			<![CDATA[
+				select N2.no, N2.title, N2.content, N2.writer, N2.regdate, N2.reply from 
+					( select @ROWNUM:=@ROWNUM+1 num, N1.* 
+						from (
+								select * 
+								from onetoone								
+								order by regdate desc 
+							) as N1
+						WHERE (@rownum:=0)=0 and title like concat('%',#{keyword },'%') or content like concat('%',#{keyword },'%')
+					) as N2
+				where num between #{start } and #{end } 
+			]]>
+	</select>
+	<select id="adminSearchTitle" parameterType="map" resultType="onetoonevo">
+			<![CDATA[
+				select N2.no, N2.title, N2.content, N2.writer, N2.regdate, N2.reply from 
+					( select @ROWNUM:=@ROWNUM+1 num, N1.* 
+						from (
+								select * 
+								from onetoone
+								order by regdate desc 
+							) as N1
+						WHERE (@rownum:=0)=0 and title like concat('%',#{keyword},'%')
+					) as N2
+				where num between #{start } and #{end }
+			]]>
+	</select>
+	
+	<insert id="write" parameterType="onetoonevo">
+		<![CDATA[
+			insert into onetoone
+			values(null, #{title }, #{content }, #{writer }, now(), null)
+		]]>
+	</insert>
+	
+	<update id="update" parameterType="map">
+		<![CDATA[
+			update onetoone
+			set title=#{title }, content=#{content } 
+			where no=#{no }
+		]]>
+	</update>
+	
+	<update id="insertReply" parameterType="map">
+		<![CDATA[
+			update onetoone
+			set reply=#{reply }
+			where no=#{no }
+		]]>
+	</update>
+	
+</mapper>
