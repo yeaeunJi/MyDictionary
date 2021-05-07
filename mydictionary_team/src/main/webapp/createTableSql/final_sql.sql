@@ -1,35 +1,3 @@
--- 자유게시판 댓글
-ALTER TABLE `tbl_reply`
-	DROP FOREIGN KEY `FK_tbl_board_TO_tbl_reply`; -- 자유게시판 -> 자유게시판 댓글
-
--- 즐겨찾기
-ALTER TABLE `bookmark`
-	DROP FOREIGN KEY `FK_bookmarklist_TO_bookmark`, -- 즐겨찾기목록 -> 즐겨찾기
-	DROP INDEX `FK_bookmarklist_TO_bookmark`; -- 즐겨찾기목록 -> 즐겨찾기
-
--- 즐겨찾기목록
-ALTER TABLE `bookmarklist`
-	DROP FOREIGN KEY `FK_dictUser_TO_bookmarklist`, -- 회원(백과사전) -> 즐겨찾기목록
-	DROP INDEX `FK_dictUser_TO_bookmarklist`; -- 회원(백과사전) -> 즐겨찾기목록
-
--- 회원(백과사전)
-DROP TABLE IF EXISTS `dictUser` RESTRICT;
-
--- 즐겨찾기
-DROP TABLE IF EXISTS `bookmark` RESTRICT;
-
--- 즐겨찾기목록
-DROP TABLE IF EXISTS `bookmarklist` RESTRICT;
-
--- 자유게시판
-DROP TABLE IF EXISTS `tbl_board` RESTRICT;
-
--- 자유게시판 댓글
-DROP TABLE IF EXISTS `tbl_reply` RESTRICT;
-
--- 1:1문의
-DROP TABLE IF EXISTS `oneToOne` RESTRICT;
-
 -- 회원(백과사전)
 CREATE TABLE `dictUser` (
 	`userNo`   INT UNSIGNED NOT NULL COMMENT '회원번호', -- 회원번호
@@ -101,7 +69,7 @@ CREATE TABLE `tbl_board` (
 	`content`  TEXT          NOT NULL COMMENT '게시글', -- 게시글
 	`tag`      VARCHAR(1000) NOT NULL DEFAULT "" COMMENT '태그', -- 태그
 	`view_cnt` INT UNSIGNED  NOT NULL DEFAULT 0 COMMENT '카운트', -- 카운트
-	`reg_id`   INT UNSIGNED  NOT NULL COMMENT '작성자', -- 작성자
+	`reg_id`   VARCHAR(200)  NOT NULL COMMENT '작성자', -- 작성자
 	`reg_dt`   DATE          NOT NULL COMMENT '작성일', -- 작성일
 	`edit_dt`  DATE          NOT NULL COMMENT '수정일' -- 수정일
 )
