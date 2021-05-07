@@ -1,0 +1,184 @@
+-- 즐겨찾기목록
+ALTER TABLE `bookmarklist`
+	DROP FOREIGN KEY `FK_dictUser_TO_bookmarklist`; -- 회원(백과사전) -> 즐겨찾기목록
+
+-- 즐겨찾기
+ALTER TABLE `bookmark`
+	DROP FOREIGN KEY `FK_dictUser_TO_bookmark`, -- 회원(백과사전) -> 즐겨찾기
+	DROP INDEX `FK_dictUser_TO_bookmark`; -- 회원(백과사전) -> 즐겨찾기
+
+-- 즐겨찾기
+ALTER TABLE `bookmark`
+	DROP FOREIGN KEY `FK_bookmarklist_TO_bookmark`, -- 즐겨찾기목록 -> 즐겨찾기
+	DROP INDEX `FK_bookmarklist_TO_bookmark`; -- 즐겨찾기목록 -> 즐겨찾기
+
+-- 회원(백과사전)
+DROP TABLE IF EXISTS `dictUser` RESTRICT;
+
+-- 즐겨찾기
+DROP TABLE IF EXISTS `bookmark` RESTRICT;
+
+-- 즐겨찾기목록
+DROP TABLE IF EXISTS `bookmarklist` RESTRICT;
+
+-- 회원(백과사전)
+CREATE TABLE `dictUser` (
+	`userNo`   INT UNSIGNED NOT NULL COMMENT '회원번호', -- 회원번호
+	`name`     VARCHAR(50)  NOT NULL COMMENT '이름', -- 이름
+	`id`       VARCHAR(200) NOT NULL COMMENT '아이디', -- 아이디
+	`password` VARCHAR(20)  NOT NULL COMMENT '비밀번호', -- 비밀번호
+	`joinDate` DATETIME     NOT NULL DEFAULT now() COMMENT '가입일' -- 가입일
+)
+COMMENT '회원(백과사전)';
+
+-- 회원(백과사전)
+ALTER TABLE `dictUser`
+	ADD CONSTRAINT `PK_dictUser` -- 회원(백과사전) 기본키
+		PRIMARY KEY (
+			`userNo` -- 회원번호
+		);
+
+ALTER TABLE `dictUser`
+	MODIFY COLUMN `userNo` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '회원번호';
+
+-- 즐겨찾기
+CREATE TABLE `bookmark` (
+	`wordNo`      INT UNSIGNED  NOT NULL COMMENT '단어번호', -- 단어번호
+	`bmkListNo`   INT UNSIGNED  NOT NULL COMMENT '즐겨찾기목록번호', -- 즐겨찾기목록번호
+	`userNo`      INT UNSIGNED  NOT NULL COMMENT '회원번호', -- 회원번호
+	`title`       VARCHAR(200)  NOT NULL COMMENT '제목', -- 제목
+	`regDate`     DATETIME      NOT NULL COMMENT '등록일', -- 등록일
+	`link`        VARCHAR(2000) NOT NULL COMMENT '링크', -- 링크
+	`keyword`     VARCHAR(2000) NULL     COMMENT '검색키워드', -- 검색키워드
+	`thumbnail`   VARCHAR(2000) NULL     COMMENT '썸네일', -- 썸네일
+	`description` VARCHAR(2000) NULL     COMMENT '요약' -- 요약
+)
+COMMENT '즐겨찾기';
+
+-- 즐겨찾기
+ALTER TABLE `bookmark`
+	ADD CONSTRAINT `PK_bookmark` -- 즐겨찾기 기본키
+		PRIMARY KEY (
+			`wordNo` -- 단어번호
+		);
+
+ALTER TABLE `bookmark`
+	MODIFY COLUMN `wordNo` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '단어번호';
+
+-- 즐겨찾기목록
+CREATE TABLE `bookmarklist` (
+	`bmkListNo`   INT UNSIGNED NOT NULL COMMENT '즐겨찾기목록번호', -- 즐겨찾기목록번호
+	`userNo`      INT UNSIGNED NOT NULL COMMENT '회원번호', -- 회원번호
+	`title`       VARCHAR(30)  NOT NULL DEFAULT "기" COMMENT '이름', -- 이름
+	`description` VARCHAR(100) NULL     COMMENT '설명', -- 설명
+	`wordCount`   INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '단어수' -- 단어수
+)
+COMMENT '즐겨찾기목록';
+
+-- 즐겨찾기목록
+ALTER TABLE `bookmarklist`
+	ADD CONSTRAINT `PK_bookmarklist` -- 즐겨찾기목록 기본키
+		PRIMARY KEY (
+			`bmkListNo`, -- 즐겨찾기목록번호
+			`userNo`     -- 회원번호
+		);
+
+ALTER TABLE `bookmarklist`
+	MODIFY COLUMN `bmkListNo` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '즐겨찾기목록번호';
+
+-- 즐겨찾기
+ALTER TABLE `bookmark`
+	ADD CONSTRAINT `FK_dictUser_TO_bookmark` -- 회원(백과사전) -> 즐겨찾기
+		FOREIGN KEY (
+			`userNo` -- 회원번호
+		)
+		REFERENCES `dictUser` ( -- 회원(백과사전)
+			`userNo` -- 회원번호
+		),
+	ADD INDEX `FK_dictUser_TO_bookmark` (
+		`userNo` ASC -- 회원번호
+	);
+
+-- 즐겨찾기
+ALTER TABLE `bookmark`
+	ADD CONSTRAINT `FK_bookmarklist_TO_bookmark` -- 즐겨찾기목록 -> 즐겨찾기
+		FOREIGN KEY (
+			`bmkListNo`, -- 즐겨찾기목록번호
+			`userNo`     -- 회원번호
+		)
+		REFERENCES `bookmarklist` ( -- 즐겨찾기목록
+			`bmkListNo`, -- 즐겨찾기목록번호
+			`userNo`     -- 회원번호
+		),
+	ADD INDEX `FK_bookmarklist_TO_bookmark` (
+		`bmkListNo` ASC, -- 즐겨찾기목록번호
+		`userNo` ASC     -- 회원번호
+	);
+
+-- 즐겨찾기목록
+ALTER TABLE `bookmarklist`
+	ADD CONSTRAINT `FK_dictUser_TO_bookmarklist` -- 회원(백과사전) -> 즐겨찾기목록
+		FOREIGN KEY (
+			`userNo` -- 회원번호
+		)
+		REFERENCES `dictUser` ( -- 회원(백과사전)
+			`userNo` -- 회원번호
+		);
+//게시판 테이블
+create table tbl_board(
+
+  bid      int auto_increment comment '일련번호' primary key,
+  cate_cd  varchar(20)   null comment '게시글 카테고리',
+  title    varchar(200)  not null comment '제목',
+  content  text          not null comment '게시글',
+  tag      varchar(1000) null comment '태그',
+  view_cnt int default 0 not null comment '카운트',
+  reg_id   varchar(45)   not null comment '작성자',
+  reg_dt   date          not null comment '작성일',
+  edit_dt  date          not null comment '수정일'
+); 
+
+
+//댓글 테이블
+create table tbl_reply
+
+(
+
+	rid     int auto_increment comment '일련번호'  primary key,
+
+	bid     int         not null comment '게시물 일련번호',
+
+	content text        null comment '댓글내용',
+
+	reg_id  varchar(45) not null comment '작성자',
+
+	reg_dt  timestamp   not null comment '작성일',
+
+	edit_dt timestamp   not null comment '수정일',
+
+	constraint tbl_reply_tbl_board_bid_fktbl_reply
+
+	foreign key (bid) references tbl_board (bid)
+
+);
+
+-- 1대1 문의/건의
+CREATE TABLE `oneToOne` (
+	`no`      INT UNSIGNED NOT NULL COMMENT '문의 번호', -- 문의 번호
+	`title`   VARCHAR(100) NOT NULL COMMENT '제목', -- 제목
+	`content` TEXT         NOT NULL COMMENT '내용', -- 내용
+	`writer`  VARCHAR(30)  NULL     COMMENT '새 컬럼', -- 새 컬럼
+	`regdate` DATETIME     NOT NULL COMMENT '작성일', -- 작성일
+	`reply`   TEXT         NULL     COMMENT '답변' -- 답변
+)
+COMMENT '1대1 문의/건의';
+
+-- 1대1 문의/건의
+ALTER TABLE `oneToOne`
+	ADD CONSTRAINT `PK_oneToOne` -- 1대1 문의/건의 기본키
+		PRIMARY KEY (
+			`no` -- 문의 번호
+		);
+
+ALTER TABLE `oneToOne`
+	MODIFY COLUMN `no` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '문의 번호';

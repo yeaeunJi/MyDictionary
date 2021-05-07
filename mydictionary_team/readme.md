@@ -32,7 +32,8 @@
 ## [사용된 언어/프레임워크/라이브러리/tools]  
 	1. 개발 환경 : Windows10, local(on Promise : 모든 것이 한 컴퓨터에 설치된 상태), Chrome 90.0 버전에서 테스트  
 	2. Front-end : Jquery, Javascript, css3, HTML5, Bootstap  
-	3. Back-end : Java 1.8, Apache Tomcat 8.5, Srping4.3, Mysql 8.0  
+	3. Back-end : Java 1.8, Apache Tomcat 8.5, Srping4.3, Mysql 8.0
+		* 테이블 생성을 위한 sql 소스 파일은 webapp/createTableSql 폴더 안에 있습니다.  
 	4. tools : 이클립스 IDE, Maven, Github  
 
 			   
